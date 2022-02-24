@@ -6,11 +6,11 @@ This is a small project for CNN in KERAS.
 This file creates, trains and save a convolutional neural network for
 Human Acitivity Recognition. The data we used for this file is released and provided by
 Wireless Sensor Data Mining (WISDM) lab and can be found on this link.
-http://www.cis.fordham.edu/wisdm/dataset.php  
+http://www.cis.fordham.edu/wisdm/dataset.php
 Feel free to use this code and site this repositry if you use it for your reports or project.
 @author: Muhammad Shahnawaz
 """
-# importing libraries and dependecies 
+# importing libraries and dependecies
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,6 +18,7 @@ from scipy import stats
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 #from keras import backend as K
+import tensorflow as tf
 from keras import optimizers
 #K.set_image_dim_ordering('th')
 # setting up a random seed for reproducibility
@@ -75,15 +76,15 @@ def segment_signal(data, window_size = 90):
             labels = np.append(labels,stats.mode(data['activity'][start:end])[0][0])
     return segments, labels
 ''' Main Code '''
-# # # # # # # # #   reading the data   # # # # # # # # # # 
+# # # # # # # # #   reading the data   # # # # # # # # # #
 # Path of file #
-dataset = readData('/home/shahnawaz/Documents/HAR/actitracker_raw.txt')
+dataset = readData('actitracker_raw.txt')
 # plotting a subset of the data to visualize
 for activity in np.unique(dataset['activity']):
     subset = dataset[dataset['activity']==activity][:180]
     plotActivity(activity,subset)
 # segmenting the signal in overlapping windows of 90 samples with 50% overlap
-segments, labels = segment_signal(dataset) 
+segments, labels = segment_signal(dataset)
 #categorically defining the classes of the activities
 labels = np.asarray(pd.get_dummies(labels),dtype = np.int8)
 # defining parameters for the input and network layers
@@ -137,7 +138,7 @@ def cnnModel():
     # adding softmax layer for the classification
     model.add(Dense(numClasses, activation='softmax'))
     # Compiling the model to generate a model
-    adam = optimizers.Adam(lr = 0.001, decay=1e-6)
+    adam = tf.keras.optimizers.Adam(lr = 0.001, decay=1e-6)
     model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
     return model
 model = cnnModel()
